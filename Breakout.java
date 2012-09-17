@@ -178,8 +178,35 @@ public class Breakout extends GraphicsProgram {
 		if ((x > WIDTH - d) || (x < 0)) {
 			vx = -vx;
 		}
+		
+		GObject collider = getCollidingObject();
+		if (collider == paddle) {
+			vy = -vy;
+		} else if (collider != null) {
+			remove(collider);
+		}
 	}
 
+	/**
+	 * search for colliding object
+	 * @return colliding object || null
+	 */
+	private GObject getCollidingObject() {
+		double x = ball.getX();
+		double y = ball.getY();
+		double d = 2 * BALL_RADIUS;
+		GObject object;
+
+		object = getElementAt(x, y);
+		if (object != null) return object;
+		object = getElementAt(x + d, y);
+		if (object != null) return object;
+		object = getElementAt(x, y + d);
+		if (object != null) return object;
+		object = getElementAt(x + d, y + d);
+		if (object != null) return object;
+		return null;
+	}
 
 
 }
