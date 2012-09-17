@@ -70,6 +70,7 @@ public class Breakout extends GraphicsProgram {
 	private double vx, vy;
 	private RandomGenerator rgen = RandomGenerator.getInstance();
 	private int numberOfBricks;
+	AudioClip bounceClip = MediaTools.loadAudioClip("bounce.au");
 
 	/* Method: init() */
 	/** Sets up the Breakout program. */
@@ -184,24 +185,29 @@ public class Breakout extends GraphicsProgram {
 		if (y < 0) {
 			vy = -vy;
 			ball.move(0, -2 * y);
+			bounceClip.play();
 		}
 		if (x > WIDTH - d) {
 			vx = -vx;
 			ball.move(-2 * (x - WIDTH + d), 0);
+			bounceClip.play();
 		}
 		if (x < 0) {
 			vx = -vx;
 			ball.move(-2 * x, 0);
+			bounceClip.play();
 		}
 		
 		GObject collider = getCollidingObject();
 		if (collider == paddle) {
 			vy = -vy;
 			ball.move(0, -2 * (y + d - HEIGHT + PADDLE_Y_OFFSET));
+			bounceClip.play();
 		} else if (collider != null) {
 			remove(collider);
 			numberOfBricks--;
 			vy = -vy;
+			bounceClip.play();
 		}
 	}
 
