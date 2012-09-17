@@ -57,11 +57,14 @@ public class Breakout extends GraphicsProgram {
 	private static final int NTURNS = 3;
 
 	/** Start value for vy */
-	private static final double VY_START = 10.0;
+	private static final double VY_START = 5.0;
 	
 	/** Animation delay or pause time between ball moves */ 
-	private static final int DELAY = 25;
+	private static final int DELAY = 15;
 
+	/** Number of times the paddle has to be hit before doubling speed */ 
+	private static final int SUCCESSFULL_PADDLEHITS_BEFORE_KICKER = 7;
+	
 	/**
 	 * instance variables
 	 */
@@ -73,6 +76,7 @@ public class Breakout extends GraphicsProgram {
 	AudioClip bounceClip = MediaTools.loadAudioClip("bounce.au");
 	private GLabel label;
 	private boolean startGame;
+	private int numberOfPaddleHits;
 
 	/* Method: init() */
 	/** Sets up the Breakout program. */
@@ -181,6 +185,8 @@ public class Breakout extends GraphicsProgram {
 		vy = VY_START;
 		vx = rgen.nextDouble(1.0, 3.0);
 		if (rgen.nextBoolean(0.5)) vx = -vx;
+		
+		numberOfPaddleHits = 0;
 	}
 
 	/**
@@ -216,13 +222,16 @@ public class Breakout extends GraphicsProgram {
 		GObject collider = getCollidingObject();
 		if (collider == paddle) {			
 			double hitPosition = (2 * (x - paddle.getX()) + d - PADDLE_WIDTH) / (d + PADDLE_WIDTH);
-			double vSquare = vx * vx + vy * vy;
-			if (vx < 0) {
-				vx *= -2 * hitPosition + 1;
+			if (hitPosition < 0) {
+				vx = -Math.abs(vx);
 			} else {
-				vx *= 2 * hitPosition + 1;
+				vx = Math.abs(vx);
 			}
-			vy = -Math.sqrt(vSquare - vx * vx);
+			numberOfPaddleHits++;
+			if (numberOfPaddleHits % SUCCESSFULL_PADDLEHITS_BEFORE_KICKER == 0) {
+				vx *= 2;
+			}
+			vy = -vy;
 			ball.move(0, -2 * (y + d - HEIGHT + PADDLE_Y_OFFSET + PADDLE_HEIGHT));
 			bounceClip.play();
 		} else if (collider instanceof GRect) {
