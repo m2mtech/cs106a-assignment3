@@ -214,8 +214,15 @@ public class Breakout extends GraphicsProgram {
 		}
 		
 		GObject collider = getCollidingObject();
-		if (collider == paddle) {
-			vy = -vy;
+		if (collider == paddle) {			
+			double hitPosition = (2 * (x - paddle.getX()) + d - PADDLE_WIDTH) / (d + PADDLE_WIDTH);
+			double vSquare = vx * vx + vy * vy;
+			if (vx < 0) {
+				vx *= -2 * hitPosition + 1;
+			} else {
+				vx *= 2 * hitPosition + 1;
+			}
+			vy = -Math.sqrt(vSquare - vx * vx);
 			ball.move(0, -2 * (y + d - HEIGHT + PADDLE_Y_OFFSET + PADDLE_HEIGHT));
 			bounceClip.play();
 		} else if (collider instanceof GRect) {
