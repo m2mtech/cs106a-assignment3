@@ -42,7 +42,7 @@ public class Breakout extends GraphicsProgram {
 
 	/** Width of a brick */
 	private static final int BRICK_WIDTH =
-	  (WIDTH - (NBRICKS_PER_ROW - 1) * BRICK_SEP) / NBRICKS_PER_ROW;
+		(WIDTH - (NBRICKS_PER_ROW - 1) * BRICK_SEP) / NBRICKS_PER_ROW;
 
 	/** Height of a brick */
 	private static final int BRICK_HEIGHT = 8;
@@ -60,6 +60,7 @@ public class Breakout extends GraphicsProgram {
 	/** Sets up the Breakout program. */
 	public void init() {
 		setupBricks();
+		setupPaddle();
 	}
 
 	/* Method: run() */
@@ -67,12 +68,15 @@ public class Breakout extends GraphicsProgram {
 	public void run() {
 		/* You fill this in, along with any subsidiary methods */
 	}
-	
+
+	/**
+	 * setup bricks
+	 */
 	private void setupBricks() {
 		int y = BRICK_Y_OFFSET;
 		int firstX = (WIDTH - BRICK_WIDTH * NBRICKS_PER_ROW - BRICK_SEP * (NBRICKS_PER_ROW - 1)) / 2;
 		Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN};
-		
+
 		for (int j = 0; j < NBRICK_ROWS; j ++) {
 			int x = firstX;
 			Color c = colors[j / 2];
@@ -87,4 +91,43 @@ public class Breakout extends GraphicsProgram {
 			y += BRICK_HEIGHT + BRICK_SEP;
 		}
 	}
+
+	/**
+	 * instance variable to control paddle
+	 */
+	private GRect paddle;
+
+	/**
+	 * setup paddle
+	 */
+	private void setupPaddle() {
+		paddle = new GRect(PADDLE_WIDTH, PADDLE_HEIGHT);
+		paddle.setLocation(
+				(WIDTH - PADDLE_WIDTH) / 2, 
+				HEIGHT - PADDLE_Y_OFFSET - PADDLE_HEIGHT
+		);
+		paddle.setFilled(true);
+		add(paddle);
+		addMouseListeners();
+	}
+
+	/**
+	 * bind paddle to mouse movement
+	 */
+	public void mouseMoved(MouseEvent e) {
+		double x = e.getX();
+		double minX = PADDLE_WIDTH / 2;
+		double maxX = WIDTH - PADDLE_WIDTH / 2;
+		if (x < minX) {
+			x = minX;
+		} else if (x > maxX) {
+			x = maxX;
+		}
+		paddle.setLocation(
+				x - minX, 
+				HEIGHT - PADDLE_Y_OFFSET - PADDLE_HEIGHT
+		);
+	}
+
+
 }
