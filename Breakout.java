@@ -77,12 +77,16 @@ public class Breakout extends GraphicsProgram {
 	private GLabel label;
 	private boolean startGame;
 	private int numberOfPaddleHits;
+	private GLabel scoreLabel;
+	private int score;
+
 
 	/* Method: init() */
 	/** Sets up the Breakout program. */
 	public void init() {
 		setupBricks();
 		setupPaddle();
+		setupScore();
 	}
 
 	/* Method: run() */
@@ -147,6 +151,30 @@ public class Breakout extends GraphicsProgram {
 		addMouseListeners();
 	}
 
+	/**
+	 * setup score label
+	 */
+	private void setupScore() {
+		score = 0;
+		scoreLabel = new GLabel("Score: " + score + " ");
+		scoreLabel.setFont("SansSerif-28");
+		double x = getWidth() - scoreLabel.getWidth();
+		double y = getHeight() - scoreLabel.getAscent();
+		scoreLabel.setLocation(x, y);
+		add(scoreLabel);
+	}
+	
+	/**
+	 * add score value and adjust the label
+	 */
+	private void addScore(int value) {
+		score += value;
+		scoreLabel.setLabel("Score: " + score + " ");
+		double x = getWidth() - scoreLabel.getWidth();
+		double y = scoreLabel.getY();
+		scoreLabel.setLocation(x, y);
+	}
+	
 	/**
 	 * bind paddle to mouse movement
 	 */
@@ -235,6 +263,11 @@ public class Breakout extends GraphicsProgram {
 			ball.move(0, -2 * (y + d - HEIGHT + PADDLE_Y_OFFSET + PADDLE_HEIGHT));
 			bounceClip.play();
 		} else if (collider instanceof GRect) {
+			if (collider.getColor() == Color.CYAN) addScore(10);
+			else if (collider.getColor() == Color.GREEN) addScore(20);
+			else if (collider.getColor() == Color.YELLOW) addScore(30);
+			else if (collider.getColor() == Color.ORANGE) addScore(40);
+			else if (collider.getColor() == Color.RED) addScore(50);
 			remove(collider);
 			numberOfBricks--;
 			vy = -vy;
