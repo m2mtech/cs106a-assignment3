@@ -56,6 +56,20 @@ public class Breakout extends GraphicsProgram {
 	/** Number of turns */
 	private static final int NTURNS = 3;
 
+	/** Start value for vy */
+	private static final double VY_START = 3.0;
+	
+	/** Animation delay or pause time between ball moves */ 
+	private static final int DELAY = 25;
+
+	/**
+	 * instance variables
+	 */
+	private GRect paddle;
+	private GOval ball;
+	private double vx, vy;
+	private RandomGenerator rgen = RandomGenerator.getInstance();
+
 	/* Method: init() */
 	/** Sets up the Breakout program. */
 	public void init() {
@@ -66,7 +80,12 @@ public class Breakout extends GraphicsProgram {
 	/* Method: run() */
 	/** Runs the Breakout program. */
 	public void run() {
-		/* You fill this in, along with any subsidiary methods */
+		setupBall();
+		while (true) {
+			moveBall();
+			checkForCollision();
+			pause(DELAY);
+		} 
 	}
 
 	/**
@@ -91,11 +110,6 @@ public class Breakout extends GraphicsProgram {
 			y += BRICK_HEIGHT + BRICK_SEP;
 		}
 	}
-
-	/**
-	 * instance variable to control paddle
-	 */
-	private GRect paddle;
 
 	/**
 	 * setup paddle
@@ -128,6 +142,44 @@ public class Breakout extends GraphicsProgram {
 				HEIGHT - PADDLE_Y_OFFSET - PADDLE_HEIGHT
 		);
 	}
+	
+	/**
+	 * setup ball
+	 */
+	private void setupBall() {
+		double d = 2 * BALL_RADIUS;
+		ball = new GOval(d, d);
+		ball.setFilled(true);
+		ball.setLocation(WIDTH / 2 - BALL_RADIUS, HEIGHT / 2 - BALL_RADIUS);
+		add(ball);
+		
+		vy = VY_START;
+		vx = rgen.nextDouble(1.0, 3.0);
+		if (rgen.nextBoolean(0.5)) vx = -vx;
+	}
+
+	/**
+	 * move ball
+	 */
+	private void moveBall() {
+		ball.move(vx, vy);
+	}
+	
+	/**
+	 * check for collision and change direction
+	 */
+	private void checkForCollision() {
+		double x = ball.getX();
+		double y = ball.getY();
+		double d = 2 * BALL_RADIUS;
+		if ((y > HEIGHT - d) || (y < 0)) {
+			vy = -vy;
+		}
+		if ((x > WIDTH - d) || (x < 0)) {
+			vx = -vx;
+		}
+	}
+
 
 
 }
