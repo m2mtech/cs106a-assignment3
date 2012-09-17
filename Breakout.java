@@ -6,7 +6,6 @@
  * 
  * This file will eventually implement the game of Breakout.
  */
-
 import acm.graphics.*;
 import acm.program.*;
 import acm.util.*;
@@ -60,12 +59,32 @@ public class Breakout extends GraphicsProgram {
 	/* Method: init() */
 	/** Sets up the Breakout program. */
 	public void init() {
-		/* You fill this in, along with any subsidiary methods */
+		setupBricks();
 	}
 
 	/* Method: run() */
 	/** Runs the Breakout program. */
 	public void run() {
 		/* You fill this in, along with any subsidiary methods */
+	}
+	
+	private void setupBricks() {
+		int y = BRICK_Y_OFFSET;
+		int firstX = (WIDTH - BRICK_WIDTH * NBRICKS_PER_ROW - BRICK_SEP * (NBRICKS_PER_ROW - 1)) / 2;
+		Color[] colors = {Color.RED, Color.ORANGE, Color.YELLOW, Color.GREEN, Color.CYAN};
+		
+		for (int j = 0; j < NBRICK_ROWS; j ++) {
+			int x = firstX;
+			Color c = colors[j / 2];
+			for (int i = 0; i < NBRICKS_PER_ROW; i++) {
+				GRect brick = new GRect(BRICK_WIDTH, BRICK_HEIGHT);
+				brick.setLocation(x, y);
+				brick.setFilled(true);
+				brick.setColor(c);
+				add(brick);
+				x += BRICK_WIDTH + BRICK_SEP;
+			}
+			y += BRICK_HEIGHT + BRICK_SEP;
+		}
 	}
 }
