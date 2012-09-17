@@ -71,6 +71,8 @@ public class Breakout extends GraphicsProgram {
 	private RandomGenerator rgen = RandomGenerator.getInstance();
 	private int numberOfBricks;
 	AudioClip bounceClip = MediaTools.loadAudioClip("bounce.au");
+	private GLabel label;
+	private boolean startGame;
 
 	/* Method: init() */
 	/** Sets up the Breakout program. */
@@ -83,6 +85,12 @@ public class Breakout extends GraphicsProgram {
 	/** Runs the Breakout program. */
 	public void run() {
 		for (int i = 0; i < NTURNS; i++) {
+			displayMessage("press mouse button");
+			startGame = false;
+			while (!startGame) {
+				pause(DELAY * 10);
+			}
+			removeMessage();
 			setupBall();
 			while ((ball.getY() < HEIGHT) && (numberOfBricks > 0)) {
 				moveBall();
@@ -90,11 +98,11 @@ public class Breakout extends GraphicsProgram {
 				pause(DELAY);
 			} 			
 			if (numberOfBricks == 0) {
-				gameOver("Winner!");
+				displayMessage("Winner!");
 				return;					
 			}
 		}
-		gameOver("Game Over");
+		displayMessage("Game Over");
 	}
 
 	/**
@@ -128,7 +136,7 @@ public class Breakout extends GraphicsProgram {
 		paddle = new GRect(PADDLE_WIDTH, PADDLE_HEIGHT);
 		paddle.setLocation(
 				(WIDTH - PADDLE_WIDTH) / 2, 
-				HEIGHT - PADDLE_Y_OFFSET
+				HEIGHT - PADDLE_Y_OFFSET - PADDLE_HEIGHT
 		);
 		paddle.setFilled(true);
 		add(paddle);
@@ -149,10 +157,17 @@ public class Breakout extends GraphicsProgram {
 		}
 		paddle.setLocation(
 				x - minX, 
-				HEIGHT - PADDLE_Y_OFFSET
+				HEIGHT - PADDLE_Y_OFFSET - PADDLE_HEIGHT
 		);
 	}
-	
+
+	/**
+	 * start game when mouse button has been clicked
+	 */
+	public void mouseClicked(MouseEvent e) {
+		startGame = true;
+	}
+
 	/**
 	 * setup ball
 	 */
@@ -201,9 +216,9 @@ public class Breakout extends GraphicsProgram {
 		GObject collider = getCollidingObject();
 		if (collider == paddle) {
 			vy = -vy;
-			ball.move(0, -2 * (y + d - HEIGHT + PADDLE_Y_OFFSET));
+			ball.move(0, -2 * (y + d - HEIGHT + PADDLE_Y_OFFSET + PADDLE_HEIGHT));
 			bounceClip.play();
-		} else if (collider != null) {
+		} else if (collider instanceof GRect) {
 			remove(collider);
 			numberOfBricks--;
 			vy = -vy;
@@ -233,11 +248,11 @@ public class Breakout extends GraphicsProgram {
 	}
 	
 	/**
-	 * print game over message
+	 * print game messages
 	 * @param message
 	 */
-	private void gameOver(String message) {
-		GLabel label = new GLabel(message);
+	private void displayMessage(String message) {
+		label = new GLabel(message);
 		label.setFont("SansSerif-28");
 		double x = (getWidth() - label.getWidth()) / 2;
 		double y = (getHeight() + label.getAscent()) / 2;
@@ -245,5 +260,11 @@ public class Breakout extends GraphicsProgram {
 		add(label);
 	}
 
+	/**
+	 * remove game messages
+	 */
+	private void removeMessage() {
+		remove(label);
+	}
 
 }
